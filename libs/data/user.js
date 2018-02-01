@@ -3,7 +3,7 @@ var db = require("../.././models");
 var fs = require("fs");
 
 function userDAO() {
-    this.id,
+    this.id;
     this.username;
     this.email;
     this.password;
@@ -17,16 +17,16 @@ function userDAO() {
 
     // MEMBERS
 
-    this.setAvatar = function(id, path, cb) {
+    this.setAvatar = function (id, path, cb) {
         db.user.update({
             avatar: path
         }, {
-            where: {
-                id: id
-            }
-        }).then(function(result){
-            cb(result);
-        });
+                where: {
+                    id: id
+                }
+            }).then(function (result) {
+                cb(result);
+            });
     }
 
     this.login = function (password, cb) {
@@ -48,8 +48,27 @@ function userDAO() {
         });
     }
 
-    this.register = function (cb) {
-        var hash = sha512(this.password);
+    this.findByEmail = function (email) {
+        return db.user.findOne(
+            {
+                where: {
+                    email: email
+                }
+            }
+        );
+    }
+
+    this.findByUsername = function (username) {
+        return db.user.findOne(
+            {
+                where: {
+                    username: username
+                }
+            }
+        );
+    }
+
+    this.register =  async function () {
         var username = this.username;
         var email = this.email;
         var first_name = this.first_name;
@@ -58,48 +77,27 @@ function userDAO() {
         var sex = this.sex;
         var age = this.age;
         var weight = this.weight;
-        db.user.findOne( // check if username exists
-            {
-                where: {
-                    username: username
-                }
-            }
-        ).then(function (result) {
-            if (result) { // if so throw error
-             } else {
-                db.user.findOne( // if not check email
-                    {
-                        where: {
-                            email: email
-                        }
-                    }
-                ).then(function (result) {
-                    if (result) { // if email exists throw error
-                        cb(false, "Email already exists!");
-                     } else { // if not enter rexort
-                        db.user.create({
-                            username: username,
-                            email: email,
-                            password: hash,
-                            first_name: first_name,
-                            last_name: last_name,
-                            bio: bio,
-                            sex: sex,
-                            age: age,
-                            weight: weight
-                        }).then(function (result) {
-                            cb(result, false);
-                        }).catch(function (error) {
-                            throw error;
-                        });
-                    }
-                }).catch(function (error) {
-                    throw error;
-                });
-            }
-        }).catch(function (error) {
-            throw error;
-        });
+
+        var emailExists = await this.findByEmail(email);
+        var usernameExists = await this.findByUsername(username);
+
+        if (!emailExists && !usernameExists) {
+            var hash = sha512(this.password);
+            return  db.user.create({
+                username: username,
+                email: email,
+                password: hash,
+                first_name: first_name,
+                last_name: last_name,
+                bio: bio,
+                sex: sex,
+                age: age,
+                weight: weight,
+                avatar: null
+            });
+        } else {
+           return new Promise(resolve => false);
+        }
     }
 
 
@@ -112,18 +110,18 @@ function userDAO() {
         var sex = this.sex;
         var age = this.age;
         var weight = this.weight;
-       db.user.update({
-           usermame: username,
-           email: email,
-           first_name: first_name,
-           last_name: last_name,
-           bio: bio,
-           sex: sex,
-           age: age,
-           weight: weight
-       },   { where: { id: id } }).then(function(result) {
+        db.user.update({
+            usermame: username,
+            email: email,
+            first_name: first_name,
+            last_name: last_name,
+            bio: bio,
+            sex: sex,
+            age: age,
+            weight: weight
+        }, { where: { id: id } }).then(function (result) {
 
-       });
+        });
     }
 }
 

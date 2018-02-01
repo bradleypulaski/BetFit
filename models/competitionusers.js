@@ -1,6 +1,13 @@
 module.exports = function (sequelize, DataTypes) {
     var competitionusers = sequelize.define("competitionusers", {
-
+        time: {
+            type: DataTypes.DOUBLE,
+            allowNull: true
+        },
+        distance: {
+            type: DataTypes.DOUBLE,
+            allowNull: true
+        }
     });
 
     competitionusers.associate = function (models) {

@@ -1,0 +1,24 @@
+<div id="wrapper">
+    <div id="left-column">
+        {{#each users}}
+        <p>{{first_name}}</p>
+        {{/each}}
+        {{#each chat}}
+        <p>{{message}}</p>
+        <p>{{user.first_name}}</p>
+        {{/each}}
+        <hr/>
+        {{categoryname.name}}
+    </div>
+    <div id="right-column">
+        <div id="chat">
+            <div id="chat-messages">
+
+            </div>
+            <div id="chat-submit">
+                <input  id="chat-message" /><button data-user="{{user}}"  data-competition="{{competition}}" id="chat-submit">Send</button>
+            </div>
+        </div>
+
+    </div>
+</div>

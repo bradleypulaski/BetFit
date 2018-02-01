@@ -4,6 +4,14 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: true
         },
+        distance: {
+            type: DataTypes.DOUBLE,
+            allowNull: true
+        },
+        fee: {
+            type: DataTypes.DOUBLE,
+            allowNull: true
+        },
         weight_min: {
             type: DataTypes.INTEGER,
             allowNull: true
@@ -15,6 +23,10 @@ module.exports = function (sequelize, DataTypes) {
         sex: {
             type: DataTypes.ENUM,
             values: ["Male", "Female"]
+        },
+        status: {
+            type: DataTypes.ENUM,
+            values: ["Open", "Closed"]
         },
         age_min: {
             type: DataTypes.INTEGER,

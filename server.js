@@ -22,6 +22,7 @@ app.use(cookieSession({
 
 
 app.use(require("./controllers/userRoutes.js"));
+app.use(require("./controllers/competitionRoutes.js"));
 
 db.sequelize.sync({ force: true }).then(function() {
     app.listen(PORT, function() {
