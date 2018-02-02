@@ -1,12 +1,71 @@
-<div id="wrapper">
-    <div id="left-column">
-        {{#each competitions}}
-        <p>{{name}}</p>
-        {{#each users}}
-        <p>{{first_name}}</p> {{/each}}
-         {{/each}}
-        <hr/> {{userdata.first_name}} {{userdata.last_name}}
-    </div>
-    <div id="right-column">
+
+
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="/competition/create"><button type="button" class="btn btn-primary" style="width: 100%">Create New Competition</button></a>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <h5 class="card-header">Open Competitions</h5>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                {{#each open}}
+                                     <li class="list-group-item">{{name}} </li>
+                                 <button class="join btn btn-primary" data-id="{{id}}">Join</button>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <h5 class="card-header" style="text-align: center">Current Competitions</h5>
+                <div class="card-body">
+                       {{#each competitions}}
+					<div class="card w-100">
+						  <div class="card-body">
+						  	<div class="row">
+						  		<div class="col-md-8">
+						  			<h5 class="card-title">{{competition.name}}</h5>
+						  			<h6>Entrants: 20</h6>
+						  			<h6>Fee: ${{competition.fee}}</h6>
+						  			<h6>Age Range: {{competition.age_min}} - {{competition.age_max}}</h6>
+						  			<h6>Weight Range: {{competition.weight_min}} - {{competition.weight_max}}</h6>
+						  		
+						  		</div>
+						  		<div class="col-md-4">
+						  			
+								    <p class="card-text">Start Date: {{competition.start}} <br> End Date: {{competition.end}}</p>
+								    <a href="/competition/view/{{competition.id}}" class="btn btn-primary">Go To Competition</a>
+								    <a href="/competition/leave/{{competition.id}}" class="btn btn-primary">Leave Competition</a>
+						  		</div>
+						  	</div>
+						  </div>
+						</div>
+
+						<br>
+                        {{/each}}
+
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
+
+<script>
+    $(".join").click(function() {
+        var id = $(this).attr("data-id");
+        location.href = "/competition/enter/" + id;
+    });
+</script>

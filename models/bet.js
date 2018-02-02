@@ -26,6 +26,9 @@ module.exports = function (sequelize, DataTypes) {
         models.bet.belongsTo(models.competitionusers, {
             as: "competitionusers"
         });
+        models.bet.belongsTo(models.competition, {
+            as: "competition"
+        });
     }
     return bet;
 };

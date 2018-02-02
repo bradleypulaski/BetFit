@@ -17,6 +17,19 @@ function userDAO() {
 
     // MEMBERS
 
+    this.getCompetitions = function() {
+        var id = this.id;
+        return db.competitionusers.findAll({
+            where: {
+                userId: id
+            },
+            include: {
+                model: db.competition,
+                as: "competition"
+            }
+        });
+    }
+
     this.setAvatar = function (id, path, cb) {
         db.user.update({
             avatar: path
@@ -96,7 +109,11 @@ function userDAO() {
                 avatar: null
             });
         } else {
-           return new Promise(resolve => false);
+            return db.user.findOne({
+                where: {
+                    id: "wdbdbwjbjkdw272g2r7g7r23g73"
+                }
+            });
         }
     }
 

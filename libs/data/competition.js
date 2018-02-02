@@ -19,6 +19,52 @@ function competitionDAO() {
     this.updatedAt;
     this.createdAt;
 
+    this.prize = async function () {
+        var users = await this.getUsersByTime();
+        var total = users.length;
+        // var top = Math.floor(total * .15);
+
+        var pool = await this.getBetsSum();
+        var place = 1;
+        var prizes = {'1': .35, '2': .28, '3': .21, '4': .16};
+        while (top > 0) {
+            var userId = users[top].userId;
+            var winnings = prizes[place] * pool;
+            db.competitionusers.update({
+                winnings: winnings
+            },
+                {
+                    where: { userId: userId }
+                })
+            place++;
+            top--;
+        }
+    }
+
+    this.calculatePrize = function (place, total, pool) {
+      
+
+        return prize;
+    }
+
+    this.getBetsSum = function () {
+        var id = this.id
+        return db.bet.sum({
+            where: {
+                competitionId: id
+            }
+        });
+    }
+
+    this.getBets = function () {
+        var id = this.id
+        return db.bet.findAll({
+            where: {
+                competitionId: id
+            }
+        });
+    }
+
     this.delete = function () {
         var id = this.id
         return db.competition.destroy({
@@ -30,12 +76,22 @@ function competitionDAO() {
 
     this.getAll = function () {
         return db.competition.findAll({
-           
+
         });
     }
 
     this.getTop = function () {
         return db.competition.findAll({
+            limit: 10,
+            order: [["createdAt", "DESC"]]
+        });
+    }
+
+    this.getOpen = function () {
+        return db.competition.findAll({
+            where: {
+                status: "Open"
+            },
             limit: 10,
             order: [["createdAt", "DESC"]]
         });
@@ -111,7 +167,7 @@ function competitionDAO() {
             name: name,
             status: status,
             distance: distance,
-            fee:fee,
+            fee: fee,
             sex: sex,
             weight_min: weight_min,
             weight_max: weight_max,
@@ -135,9 +191,29 @@ function competitionDAO() {
 
     this.getUsers = function () {
         var id = this.id;
-        return db.competitionusers.find(
+        return db.competitionusers.findAll(
             {
                 where: { competitionId: id },
+                include: [{ model: db.user, as: 'user' }]
+            }
+        );
+    }
+
+    this.dropUser = function (userId) {
+        var id = this.id;
+        return db.competitionusers.destroy(
+            {
+                where: { userId: userId },
+             }
+        );
+    }
+    this.getUsersByTime = function () {
+        var id = this.id;
+        return db.competitionusers.find(
+            {
+                order: [["time", "ASC"]],
+                where: { competitionId: id },
+                limit: 4,
                 include: [{ model: db.user, as: 'user' }]
             }
         );

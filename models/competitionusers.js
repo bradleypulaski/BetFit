@@ -4,6 +4,14 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.DOUBLE,
             allowNull: true
         },
+        isbet: {
+            type: DataTypes.TINYINT,
+            defaultValue: 0
+        },
+        winnings: {
+            type: DataTypes.DOUBLE,
+            defaultValue: 0.00
+        },
         distance: {
             type: DataTypes.DOUBLE,
             allowNull: true

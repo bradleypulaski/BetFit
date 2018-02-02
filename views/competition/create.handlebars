@@ -1,0 +1,167 @@
+
+<!-- PRAMETERS
+
+age_min
+age_max
+weight_min
+weight_max
+sex (Male or Female)
+category
+distance
+start
+end
+fee
+status
+
+ -->
+
+
+
+
+
+
+
+		<div class="card">
+			<h5 class="card-header">Create Competition</h5>
+			<div class="card-body">
+				<form action="/competition/create" method="POST" id="form">
+
+					
+<input type="hidden" id="age_min" name="age_min" />
+<input type="hidden" id="age_max" name="age_max" />
+<input type="hidden" id="weight_min" name="weight_min" />
+<input type="hidden" id="weight_max" name="weight_max" />
+
+
+	  <div class="form-group">
+				    <label for="exampleFormControlSelect1">Name</label>
+    				<input type="text" class="form-control" id="name" name="name">
+				  </div>
+				  
+
+				  <div class="form-group">
+				    <label for="exampleFormControlSelect1">Public/Private</label>
+				    <select class="form-control" id="status" name="status">
+				      <option value="Open">Public</option>
+				      <option value="Closed">Private</option>
+				    </select>
+				  </div>
+
+				  <div class="form-group">
+				    <label for="exampleFormControlSelect1">Gender</label>
+				    <select class="form-control" id="sex" name="sex">
+				      <option value="male">Male</option>
+				      <option value="female">Female</option>
+				    </select>
+				  </div>
+
+				  <div class="form-group">
+				    <label for="exampleFormControlSelect1">Age Group</label>
+				    <select class="form-control" id="age-range" name="age-range">
+				      <option>Please Select Age Range</option>
+				      <option value="18 - 28">18 - 28</option>
+				      <option value="29 - 39">29 - 39</option>
+				      <option value="40 - 50">40 - 50</option>
+				      <option value="51">50+</option>
+				    </select>
+				  </div>
+
+				  <div class="form-group">
+				    <label for="exampleFormControlSelect1">Weight Range</label>
+				    <select class="form-control" id="weight-range" name="weight-range">
+				      <option value="0">Please Select Weight Range</option>
+
+				      <option value="100 - 149">100 - 140</option>
+				      <option value="141 - 180">141 - 180</option>
+				      <option value="181 - 220">181 - 220</option>
+				      <option value="221 - 260">221 - 260</option>
+				      <option value="261 - 300">261 - 300</option>
+				      <option value="301">300+</option>
+				    </select>
+				  </div>
+
+
+				  <div class="form-group">
+				    <label for="exampleFormControlSelect1">Activity</label>
+				    <select class="form-control" id="category" name="category">
+
+							{{#each categories}}
+				      <option value="{{id}}">{{name}}</option>
+							{{/each}}
+				   
+				    </select>
+				  </div>
+
+				  <div class="form-group">
+				    <label for="exampleFormControlSelect1">Distance</label>
+    				<input type="text" class="form-control" id="distance" name="distance">
+				  </div>
+				  
+				  <div class="form-group">
+				    <label for="exampleFormControlTextarea1">Start Date</label>
+				    <input id="start" name="start" width="276" />
+				    <script>
+				        $('#start').datepicker({
+				            uiLibrary: 'bootstrap4'
+				        });
+				    </script>
+				  </div>
+
+				  <div class="form-group">
+				    <label for="exampleFormControlTextarea1">End Date</label>
+				    <input id="end" name="end" width="276" />
+				    <script>
+				        $('#end').datepicker({
+				            uiLibrary: 'bootstrap4'
+				        });
+				    </script>
+				  </div>
+
+				  <div class="form-group">
+				    <label for="exampleFormControlSelect1">Entry Fee</label>
+    				<input type="text" class="form-control" id="fee" name="fee">
+				  </div>
+
+
+				
+				<button id="create" type="button" class="btn btn-primary">Create</button>
+				</form>
+			</div>
+		</div>
+
+
+
+
+
+
+
+
+
+
+	</div>
+	<script>
+	
+	$("#age-range").change(function(){
+		var value = $(this).val(); // 100 - 140 
+		var array = value.split(" - ");
+		var min = array[0];
+		var max = array[1];
+		$("#age_min").val(min);
+		$("#age_max").val(max);
+	});
+
+	$("#weight-range").change(function(){
+		var value = $(this).val(); // 100 - 140 
+		var array = value.split(" - ");
+		var min = array[0];
+		var max = array[1];
+		$("#weight_min").val(min);
+		$("#weight_max").val(max);
+	});
+
+	$("#create").click(function() {
+		$("#form").submit();
+	});
+
+
+</script>

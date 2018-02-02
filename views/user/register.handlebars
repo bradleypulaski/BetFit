@@ -1,0 +1,74 @@
+<div class="card">
+	<h5 class="card-header">Register</h5>
+	<div class="card-body">
+		<form id="registerform" action="/register" method="POST">
+			<div class="form-group">
+				<label for="exampleFormControlSelect1">User Name</label>
+				<input type="text" class="form-control" id="username" name="username">
+			</div>
+
+			<div class="form-group">
+				<label for="exampleFormControlSelect1">Password</label>
+				<input type="password" class="form-control" id="password" name="password">
+			</div>
+
+			<div class="form-group">
+				<label for="exampleFormControlSelect1">First Name</label>
+				<input type="text" class="form-control" id="firstName" name="first_name">
+			</div>
+
+			<div class="form-group">
+				<label for="exampleFormControlSelect1">Last Name</label>
+				<input type="text" class="form-control" id="lastName" name="last_name">
+			</div>
+
+			<div class="form-group">
+				<label for="exampleFormControlInput1">Email address</label>
+				<input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" name="email">
+			</div>
+
+			 <div class="form-group">
+  <label for="sex">Select list:</label>
+  <select class="form-control" id="sex" name="sex">
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+ 
+  </select>
+</div> 
+
+					<div class="form-group">
+				<label for="exampleFormControlInput1">Age</label>
+				<input type="text" class="form-control" id="exampleFormControlInput1" name="age">
+			</div>
+					<div class="form-group">
+				<label for="exampleFormControlInput1">Weight</label>
+				<input type="text" class="form-control" id="exampleFormControlInput1" name="weight">
+			</div>
+
+					<div class="form-group">
+				<label for="bio">Bio</label>
+				<textarea class="form-control" rows="5" name="bio"></textarea>
+			</div>
+			<button id="register" type="button" class="btn btn-primary">Submit</button>
+			<button id="login" type="button" class="btn btn-primary">Login</button>
+		</form>
+	</div>
+</div>
+
+
+<script>
+	$("#register").click(function () {
+		$("#registerform").submit();
+	});
+		$("#login").click(function () {
+			location.href = "/login";
+	});
+</script>
+
+
+
+
+
+
+
+</div>

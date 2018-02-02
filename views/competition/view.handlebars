@@ -1,24 +1,92 @@
-<div id="wrapper">
-    <div id="left-column">
-        {{#each users}}
-        <p>{{first_name}}</p>
-        {{/each}}
-        {{#each chat}}
-        <p>{{message}}</p>
-        <p>{{user.first_name}}</p>
-        {{/each}}
-        <hr/>
-        {{categoryname.name}}
-    </div>
-    <div id="right-column">
-        <div id="chat">
-            <div id="chat-messages">
 
-            </div>
-            <div id="chat-submit">
-                <input  id="chat-message" /><button data-user="{{user}}"  data-competition="{{competition}}" id="chat-submit">Send</button>
-            </div>
-        </div>
+ 
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-md-8">
+					<div class="card">
+						<h5 class="card-header">Competition Leaderboard</h5>
+						<div class="card-body">
 
-    </div>
+							{{#each users}}
+							<div class="card w-100">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-md-4">
+											<img src="https://d30y9cdsu7xlg0.cloudfront.net/png/21814-200.png" alt="">
+										</div>
+										<div class="col-md-8">
+											<p>Name: {{user.first_name}} {{user.last_name}}</p>
+											<p>Time: {{time}}</p>
+											<p>Age: {{user.age}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<br> {{/each}}
+
+				
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="card">
+						<h5 class="card-header">Chat Box</h5>
+						<div class="card-body">
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<br>
+
+
+
+	<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators">
+			<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+			<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+			<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+		</ol>
+		<div class="carousel-inner">
+			<div class="carousel-item active">
+				<div class="container sports-images">
+					<img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text=First slide" alt="First slide [800x400]"
+					 src="https://static.pexels.com/photos/258045/pexels-photo-258045.jpeg" data-holder-rendered="true">
+					<div class="centered">Cycling</div>
+				</div>
+			</div>
+			<div class="carousel-item">
+				<div class="container sports-images">
+					<img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=666&amp;fg=444&amp;text=Second slide" alt="Second slide [800x400]"
+					 src="https://static.pexels.com/photos/73760/swimming-swimmer-female-race-73760.jpeg" data-holder-rendered="true">
+					<div class="centered">Swimming</div>
+				</div>
+			</div>
+			<div class="carousel-item">
+				<div class="container sports-images">
+					<img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=555&amp;fg=333&amp;text=Third slide" alt="Third slide [800x400]"
+					 src="https://static.pexels.com/photos/235922/pexels-photo-235922.jpeg" data-holder-rendered="true">
+					<div class="centered">Running</div>
+				</div>
+			</div>
+		</div>
+		<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+			<span class="sr-only">Previous</span>
+		</a>
+		<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+			<span class="carousel-control-next-icon" aria-hidden="true"></span>
+			<span class="sr-only">Next</span>
+		</a>
+	</div>
+
+
+
 </div>

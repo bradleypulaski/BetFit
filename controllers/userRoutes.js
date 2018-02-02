@@ -6,6 +6,8 @@ var formidable = require('formidable');
 var fs = require("fs");
 var path = require('path');
 var user = require("../libs/data/user");
+var sha512 = require("../libs/utilities/sha512.js");
+const busboy = require('connect-busboy');
 
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
@@ -22,6 +24,10 @@ process.on('unhandledRejection', function (reason, p) { // moar reasons for unha
     console.log("Possibly Unhandled Rejection at: Promise ", p, " reason: ", reason);
 });
 
+
+router.get("/pass", function (req, res) {
+    res.json(sha512("hello"));
+});
 
 
 // ROUTES
@@ -67,19 +73,33 @@ router.get("/seeds", async function (req, res) {
 
 //  REAL ROUTES
 
-router.get("/user/profile", function(req, res){
+router.get("/user/profile", function (req, res) {
     var params = {
         userdata: req.session.user,
         title: "Profile"
     }
+    if (req.session.error !== null && req.session.error !== false) {
+        params.error = req.session.error;
+        req.session.error = false;
+    }
+
     res.render("user/profile", params);
 });
 
-router.get("/register", function(req, res){
-    res.render("user/profile", {});
+router.get("/register", function (req, res) {
+    res.render("user/register", {});
 });
-router.get("/login", function(req, res){
-    res.render("user/login", {});
+
+router.get("/login", function (req, res) {
+    params = {
+        title: "Login"
+    };
+    if (req.session.error !== null && req.session.error !== false) {
+        params.error = req.session.error;
+        req.session.error = false;
+    }
+
+    res.render("user/login", params);
 });
 
 router.post("/login", function (req, res) {
@@ -89,28 +109,28 @@ router.post("/login", function (req, res) {
     user.login(password, function (result, error) {
         if (!error) {
             req.session.user = result;
-            return res.json(req.session);
+            res.redirect("/competition/landing");
         } else {
-            return res.json(error);
+            req.session.error = "Login Error, Username or Password does not match! Please Try again!";
+            backURL = req.header('Referer') || '/';
+            res.redirect(backURL);
         }
     });
 });
 
-router.post("/user/avatar", function (req, res) {
-    var form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
-        var oldpath = files.filetoupload.path;
-        var ex = path.extname(oldpath);
-        if (ex !== ".jpg" && ex !== ".png") {
-            return res.json("please upload a jpeg or png image!");
-        }
-        var newpath = __dirname + "../uploads/avatars" + files.filetoupload.name;
-        fs.rename(oldpath, newpath, function (err) {
-            if (err) throw err;
-            user.setAvatar(req.session.user.id, newpath, function (result, error) {
-                if (!error) {
-                    return res.json("upload successful");
-                }
+router.post("/user/avatar", async function (req, res) {
+    var fstream;
+    req.pipe(req.busboy);
+    req.busboy.on('file', function (fieldname, file, filename) {
+        console.log("Uploading: " + filename);
+        fstream = fs.createWriteStream(__dirname + '/../uploads/avatars/' + filename);
+
+        file.pipe(fstream);
+        fstream.on('close', function () {
+            var dir = '../uploads/avatars/' + filename;
+            user.id = req.session.user.id;
+            user.setAvatar(user.id, dir, function (result) {
+                res.redirect('back');
             });
         });
     });
@@ -130,16 +150,15 @@ router.post("/register", async function (req, res) {
     user.weight = data.weight;
     user.email = data.email;
     user.sex = data.sex;
-
     var userobject = await user.register();
 
     if (!userobject) {
-        return res.render( "user/login",  {error,"Username or Email already exists!"});
+        return res.render("user/register", { error: "Username or Email already exists!" });
     }
 
     req.session.user = userobject;
 
-    return res.redirect("/home");
+    return res.redirect("/competition/landing");
 });
 
 router.post("/user/update", function (req, res) {
@@ -164,8 +183,9 @@ router.post("/user/update", function (req, res) {
     });
 });
 
-router.post("/logout", function (req, res) {
-    req.session.destroy(); // destroy session
+router.get("/logout", function (req, res) {
+    req.session = null; // destroy session
+    res.redirect("/login");
 });
 
 

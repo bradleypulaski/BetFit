@@ -1,0 +1,49 @@
+
+
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card">
+					<h5 class="card-header">Your Competitions</h5>
+					<div class="card-body">
+                        {{#each competitions}}
+					<div class="card w-100">
+						  <div class="card-body">
+						  	<div class="row">
+						  		<div class="col-md-8">
+						  			<h5 class="card-title">{{competition.name}}</h5>
+						  			<h6>Entrants: 20</h6>
+						  			<h6>Fee: ${{competition.fee}}</h6>
+						  			<h6>Age Range: {{competition.age_min}} - {{competition.age_max}}</h6>
+						  			<h6>Weight Range: {{competition.weight_min}} - {{competition.weight_max}}</h6>
+						  		
+						  		</div>
+						  		<div class="col-md-4">
+						  			
+								    <p class="card-text">Start Date: {{competition.start}} <br> End Date: {{competition.end}}</p>
+								    <a href="/competition/view/{{competition.id}}" class="btn btn-primary">Go To Competition</a>
+								    <a href="/competition/leave/{{competition.id}}" class="btn btn-primary">Leave Competition</a>
+						  		</div>
+						  	</div>
+						  </div>
+						</div>
+
+						<br>
+                        {{/each}}
+
+						
+						
+						
+					</div>
+				</div>
+			</div>
+
+			
+
+
+
+
+
+		</div>
+
+
