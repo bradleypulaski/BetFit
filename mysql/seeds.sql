@@ -25,6 +25,7 @@ INSERT INTO users (`first_name`,`email`, `last_name`, `bio`, `username`, `age`, 
 
 INSERT INTO competitions (`name`, `status`, `fee`, `distance`,  `ownerId`, `weight_min`, `weight_max`, `sex`, `age_min`, `age_max`, `start`, `end`, `active`, `createdAt`, `updatedAt`, `categoryId`) VALUES ('Brads Open Running Tourney', "Open", 2000, 30000, 1, 0, 10000, "Male", 0, 10000, "2011-01-01", "2022-01-01", 1, '2018-02-02', '2018-02-02', 1);
 INSERT INTO competitions (`name`, `status`, `fee`, `distance`,  `ownerId`, `weight_min`, `weight_max`, `sex`, `age_min`, `age_max`, `start`, `end`, `active`, `createdAt`, `updatedAt`, `categoryId`) VALUES ('Leets Open Running Tourney', "Open", 2000, 30000, 1, 0, 10000, "Male", 0, 10000, "2011-01-01", "2022-01-01", 1, '2018-02-02', '2018-02-02', 1);
+INSERT INTO competitions (`name`, `status`, `fee`, `distance`,  `ownerId`, `weight_min`, `weight_max`, `sex`, `age_min`, `age_max`, `start`, `end`, `active`, `createdAt`, `updatedAt`, `categoryId`) VALUES ('Womens Open Running Tourney', "Open", 2000, 30000, 1, 0, 10000, "Female", 0, 10000, "2011-01-01", "2022-01-01", 1, '2018-02-02', '2018-02-02', 1);
 
 INSERT INTO competitionusers (`userId`, `competitionId`, `time`, `isbet`, `winnings`, `distance`, `createdAt`, `updatedAt`) VALUES(1, 1, 10.00, 1, 0, 30000.00, '2018-02-02', '2018-02-02');
 INSERT INTO competitionusers (`userId`, `competitionId`, `time`, `isbet`, `winnings`, `distance`, `createdAt`, `updatedAt`) VALUES(2, 1, 120.00, 1, 0, 30000.00, '2018-02-02', '2018-02-02');

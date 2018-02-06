@@ -5,35 +5,9 @@ var path = require("path");
 var competition = require("../libs/data/competition.js");
 var user = require("../libs/data/user.js");
 
-
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 var appDir = path.dirname(require.main.filename);
-
-
-router.get("/competition/enter/:id", async function (req, res) {
-    var competitionId = req.params.id;
-    competition.id = competitionId;
-    var compobj = competition.findById(competitionId);
-    await competition.map();
-
-    competition.addUser(req.session.user.id, function (result) {
-        if (!result) {
-            req.session.error = "you do not have permission to go to this competition";
-            return res.redirect("/competition/user");
-        } else {
-            res.redirect("/competition/view/" + competitionId);
-        }
-    });
-});
-
-
-router.get("/competition/leave/:id", async function (req, res) {
-    var competitionId = req.params.id;
-    competition.id = competitionId;
-    await competition.dropUser(req.session.user.id);
-    res.redirect("/competition/user");
-});
 
 
 router.get("/competition/view/:id", async function (req, res) {
@@ -53,6 +27,10 @@ router.get("/competition/view/:id", async function (req, res) {
         competition: competitionId
     };
 
+    // SOCKET.IO code here
+
+
+
     if (req.session.error !== null && req.session.error !== false) {
         params.error = req.session.error;
         req.session.error = false;
@@ -67,7 +45,7 @@ router.get("/competition/view/:id", async function (req, res) {
         req.session.error = "you do not have permission to go to this competition";
         return res.redirect("/competition/landing");
     } else {
-        params.users = await competition.getUsers();
+        params.users = await competition.getAllUsersByTime();
         params.categoryname = await competition.getCategoryName();
         params.chat = await competition.getChat();
         return res.render("competition/view", params);
@@ -75,10 +53,48 @@ router.get("/competition/view/:id", async function (req, res) {
 });
 
 
+
+router.get("/competition/enter/:id", async function (req, res) {
+    var competitionId = req.params.id;
+    competition.id = competitionId;
+    var compobj = await competition.findById(competitionId);
+    await competition.map(compobj);
+
+    competition.addUser(req.session.user.id, function (result, error) {
+        if (!result) {
+            req.session.error = error;
+            return res.redirect("/competition/landing");
+        } else {
+            res.redirect("/competition/view/" + competitionId);
+        }
+    });
+});
+
+
+router.post("/competition/time/:id", async function(req, res){
+    var competitionId = req.params.id;
+    var userId = req.session.user.id;
+    var time = req.body.time;
+    competition.id = competitionId;
+    await competition.setTime(userId, time);
+    res.redirect("/competition/view/" + competitionId);
+});
+
+router.get("/competition/leave/:id", async function (req, res) {
+    var competitionId = req.params.id;
+    competition.id = competitionId;
+    await competition.dropUser(req.session.user.id);
+    res.redirect("/competition/user");
+});
+
+
+
+
+
 router.get("/competition/landing", async function (req, res) {
     user.id = req.session.user.id;
     var competitions = await user.getCompetitions();
-    var open = await competition.getOpen();
+    var open = await competition.getOpenForUser(req.session.user.id);
     for (var key in competitions) {
         var id = competitions[key].id;
         competition.id = id;
@@ -155,8 +171,21 @@ router.get("/competition/delete/:id", async function (req, res) {
     }
 });
 
-router.post("/competition/bet/:id", function (req, res) {
+router.get("/competition/bet/:id", async function (req, res) {
+    var userId = req.session.user.id;
+    var competitionId = req.params.id;
+    competition.id = competitionId;
+    await competition.setBet(userId);
+    res.redirect("/competition/landing");
+});
 
+
+router.get("/competition/removebet/:id", async function (req, res) {
+    var userId = req.session.user.id;
+    var competitionId = req.params.id;
+    competition.id = competitionId;
+    await competition.removeBet(userId);
+    res.redirect("/competition/landing");
 });
 
 

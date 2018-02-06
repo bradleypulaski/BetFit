@@ -23,6 +23,11 @@
 								    <p class="card-text">Start Date: {{competition.start}} <br> End Date: {{competition.end}}</p>
 								    <a href="/competition/view/{{competition.id}}" class="btn btn-primary">Go To Competition</a>
 								    <a href="/competition/leave/{{competition.id}}" class="btn btn-primary">Leave Competition</a>
+									{{#if isbet}}
+                                   {{else}}
+                                    <a href="/competition/bet/{{competition.id}}" class="btn btn-primary">Join Bet Pool</a>
+
+                                   {{/if}}
 						  		</div>
 						  	</div>
 						  </div>

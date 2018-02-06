@@ -1,4 +1,22 @@
 var db = require("../.././models");
+var mysql = require("mysql2");
+
+var con;
+if (process.env.JAWSDB_URL) {
+    con = mysql.createConnection(process.env.JAWSDB_URL);
+} else {
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "PASS",
+        database: "betfit"
+    });
+}
+
+con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected!");
+});
 
 function competitionDAO() {
     this.id;
@@ -19,14 +37,40 @@ function competitionDAO() {
     this.updatedAt;
     this.createdAt;
 
+
+    this.addChat = function (userId, message, cb) {
+        var competitionId = this.id;
+        db.competitionchat.create({
+            userId: userId,
+            competitionId: competitionId,
+            message: message,
+            edited: 0
+        }).then(function (result) {
+            cb(result)
+        });
+    }
+
+    this.setTime = function (userId, time) {
+        var competitionId = this.id;
+        return db.competitionusers.update({
+            time: time
+        }, {
+                where: {
+                    userId: userId,
+                    competitionId: competitionId
+                }
+            });
+    }
+
     this.prize = async function () {
         var users = await this.getUsersByTime();
         var total = users.length;
         // var top = Math.floor(total * .15);
-
-        var pool = await this.getBetsSum();
+        var top = 4;
+        var sumobj = await this.getBetsSum();
+        var pool = sumobj[0].sum;
         var place = 1;
-        var prizes = {'1': .35, '2': .28, '3': .21, '4': .16};
+        var prizes = { '1': .35, '2': .28, '3': .21, '4': .16 };
         while (top > 0) {
             var userId = users[top].userId;
             var winnings = prizes[place] * pool;
@@ -35,26 +79,33 @@ function competitionDAO() {
             },
                 {
                     where: { userId: userId }
-                })
+                });
             place++;
             top--;
         }
     }
 
     this.calculatePrize = function (place, total, pool) {
-      
+
 
         return prize;
     }
 
     this.getBetsSum = function () {
-        var id = this.id
-        return db.bet.sum({
-            where: {
-                competitionId: id
-            }
+        var sql = "SELECT COUNT(*) * competitions.fee as sum " +
+            "FROM competitionusers " +
+            "LEFT JOIN competitions " +
+            "ON competitionusers.competitionId = competitions.id " +
+            "WHERE competitionusers.competitionId = " + this.id + "  ";
+        return new Promise((resolve, reject) => {
+            con.query(sql, (err, rows) => {
+                if (err)
+                    return reject(err);
+                resolve(rows);
+            });
         });
     }
+
 
     this.getBets = function () {
         var id = this.id
@@ -97,6 +148,22 @@ function competitionDAO() {
         });
     }
 
+    this.getOpenForUser = function (userId) {
+        var sql = "SELECT * " +
+            "FROM competitions c " +
+            "WHERE c.status = 'Open' " +
+            "AND NOT EXISTS (SELECT * " +
+            "FROM   competitionusers  " +
+            "WHERE competitionusers.userId = " + userId + "  " +
+            "AND c.id = competitionusers.competitionId)  ";
+        return new Promise((resolve, reject) => {
+            con.query(sql, (err, rows) => {
+                if (err)
+                    return reject(err);
+                resolve(rows);
+            });
+        });
+    }
 
 
     this.findById = function (id) {
@@ -105,9 +172,10 @@ function competitionDAO() {
     }
 
     this.map = function (object) {
-        for (var key in object) {
-            this[key] = object[key];
+        for (var key in object.dataValues) {
+            this[key] = object.dataValues[key];
         }
+        console.log(this)
     }
 
     this.forceAddUser = function (userId) {
@@ -126,23 +194,36 @@ function competitionDAO() {
         var sex = this.sex;
         var competitionId = this.id;
         db.user.findOne({ where: { id: userId } }).then(function (result) {
-            if (result.sex = sex) {
+
+            console.log("COMP______________________");
+            console.log(age_min);
+            console.log(age_max);
+            console.log(weight_min);
+            console.log(weight_max);
+            console.log(sex);
+            console.log("RESULT___________________");
+            console.log(result.age);
+            console.log(result.weight);
+            console.log(result.sex);
+
+
+            if (result.sex == sex) {
                 if (result.weight < weight_max && result.weight > weight_min) {
-                    if (result.age < age_max && result.weight > age_min) {
+                    if (result.age < age_max && result.age > age_min) {
                         db.competitionusers.create({
                             competitionId: competitionId,
                             userId: userId
                         }).then(function (result) {
-                            return cb(result);
+                            return cb(result, false);
                         });
                     } else {
-                        return cb("age does not qualify");
+                        return cb(false, "age does not qualify");
                     }
                 } else {
-                    return cb("weight does not qualify");
+                    return cb(false, "weight does not qualify");
                 }
             } else {
-                return cb("sex does not qualify");
+                return cb(false, "sex does not qualify");
             }
         });
     }
@@ -204,7 +285,7 @@ function competitionDAO() {
         return db.competitionusers.destroy(
             {
                 where: { userId: userId },
-             }
+            }
         );
     }
     this.getUsersByTime = function () {
@@ -214,6 +295,17 @@ function competitionDAO() {
                 order: [["time", "ASC"]],
                 where: { competitionId: id },
                 limit: 4,
+                include: [{ model: db.user, as: 'user' }]
+            }
+        );
+    }
+
+    this.getAllUsersByTime = function () {
+        var id = this.id;
+        return db.competitionusers.findAll(
+            {
+                order: [["time", "ASC"]],
+                where: { competitionId: id },
                 include: [{ model: db.user, as: 'user' }]
             }
         );
@@ -230,7 +322,7 @@ function competitionDAO() {
         );
     }
 
-    this.getCategories = function (cb) {
+    this.getCategories = function () {
         return db.competitioncategory.findAll(
             {
             }
@@ -276,22 +368,28 @@ function competitionDAO() {
         return db.competitionusers.findOne({ where: { competitionId: competitionId, userId: userId } });
     }
 
-    this.setBet = function (userId, item, value, is_collaterol, cb) {
-        db.competitionusers.findOne({
-            where: {
-                userId: userId
-            }
-        }).then(function (result) {
-            var id = result.id;
-            db.bet.create({
-                competitionusersId: id,
-                item: item,
-                value: value,
-                is_collaterol: is_collaterol
-            }).then(function (result) {
-                cb(result);
+    this.setBet = function (userId) {
+        var competitionId = this.id;
+        return db.competitionusers.update({
+            isbet: 1
+        }, {
+                where: {
+                    userId: userId,
+                    competitionId: competitionId
+                }
             });
-        });
+    }
+
+    this.removeBet = function (userId) {
+        var competitionId = this.id;
+        return db.competitionusers.update({
+            isbet: 0
+        }, {
+                where: {
+                    userId: userId,
+                    competitionId: competitionId
+                }
+            });
     }
 }
 

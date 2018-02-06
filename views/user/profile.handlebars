@@ -1,35 +1,64 @@
-<br><br><br>
+<br>
+<br>
+<br>
 
 
-        <div class="jumbotron">
-          <div class="row">
-              <div class="col-md-4 col-xs-12 col-sm-6 col-lg-4">
-                  <img src="https://www.svgimages.com/svg-image/s5/man-passportsize-silhouette-icon-256x256.png" alt="stack photo" class="img">
-                        <form action="/user/avatar" method="post" encType="multipart/form-data">
-                          <div class="form-group">
-                            <label for="exampleFormControlFile1">Example file input</label>
-                            <input type="file" name="avatar" class="form-control-file" id="exampleFormControlFile1">
-                            <input type="submit" value="Submit Profile";
-                          </div>
-                        </form>
-             </div>
-             
-              
-              <div class="col-md-8 col-xs-12 col-sm-6 col-lg-8">
-                  <div class="container" style="border-bottom:1px solid black">
-                    <h2 name="username">{{userdata.username}}</h2>
-                  </div>
-                    <hr>
-                  <ul class="container details">
-                    <li><p><span name="username" style="width:50px;">User Name:  </span>{{userdata.username}}</p></li>
-                    <li><p><span name="email" style="width:50px;">E-mail:  </span>{{userdata.email}}</p></li>
-                    <li><p><span name="first_name" style="width:50px;">First Name:  </span>{{userdata.first_name}}</p></li>
-                    <li><p><span name="last_name" style="width:50px;">Last Name:  </span>:  </span>{{userdata.last_name}}</p></li>
-                    <li><p><span name="bio" style="width:50px;">Bio:  </span>:  </span>{{userdata.bio}}</p></li>
-                    <li><p><span name="sex" style="width:50px;">Sex:  </span>{{userdata.sex}}</p></li>
-                    <li><p><span name="age" style="width:50px;">Age:  </span>{{userdata.age}}</p></li>
-                    <li><p><span name="weight" style="width:50px;">Weight</span>:  </span>{{userdata.weight}}</p></li>
-                  </ul>
-              </div>
-          </div>
+<div class="jumbotron">
+  <div class="row">
+    <div class="col-md-4 col-xs-12 col-sm-6 col-lg-4">
+
+      {{#if userdata.avatar}}
+      <img class="profile" src="{{userdata.avatar}}" alt="stack photo" class="img"> {{else}}
+      <img class="profile" src="https://www.svgimages.com/svg-image/s5/man-passportsize-silhouette-icon-256x256.png" alt="stack photo" class="img"> {{/if}}
+      <form action="/user/avatar" method="post" encType="multipart/form-data">
+        <div class="form-group">
+          <label for="exampleFormControlFile1">Upload Avatar</label>
+          <input type="file" name="avatar" class="form-control-file" id="exampleFormControlFile1">
+          <input type="submit" value="Submit Profile" ; </div>
+      </form>
+      </div>
+
+
+     
+    </div>
+     <div class="col-md-8 col-xs-12 col-sm-6 col-lg-8">
+        <div class="container" style="border-bottom:1px solid black">
+          <h2 name="username">{{userdata.username}}</h2>
         </div>
+        <hr>
+        <ul class="container details">
+          <li>
+            <p>
+              <span name="username" style="width:50px;">User Name: </span>{{userdata.username}}</p>
+          </li>
+          <li>
+            <p>
+              <span name="email" style="width:50px;">E-mail: </span>{{userdata.email}}</p>
+          </li>
+          <li>
+            <p>
+              <span name="first_name" style="width:50px;">First Name: </span>{{userdata.first_name}}</p>
+          </li>
+          <li>
+            <p>
+              <span name="last_name" style="width:50px;">Last Name: </span>: </span>{{userdata.last_name}}</p>
+          </li>
+          <li>
+            <p>
+              <span name="bio" style="width:50px;">Bio: </span>: </span>{{userdata.bio}}</p>
+          </li>
+          <li>
+            <p>
+              <span name="sex" style="width:50px;">Sex: </span>{{userdata.sex}}</p>
+          </li>
+          <li>
+            <p>
+              <span name="age" style="width:50px;">Age: </span>{{userdata.age}}</p>
+          </li>
+          <li>
+            <p>
+              <span name="weight" style="width:50px;">Weight</span>: </span>{{userdata.weight}}</p>
+          </li>
+        </ul>
+      </div>
+  </div>

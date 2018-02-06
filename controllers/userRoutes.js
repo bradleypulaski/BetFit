@@ -2,21 +2,23 @@ var express = require("express");
 var router = express.Router();
 var bodyParser = require("body-parser");
 var path = require("path");
-var formidable = require('formidable');
 var fs = require("fs");
 var path = require('path');
 var user = require("../libs/data/user");
 var sha512 = require("../libs/utilities/sha512.js");
-const busboy = require('connect-busboy');
+var fileupload = require("express-fileupload");
 
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
+
+router.use(fileupload());
 var appDir = path.dirname(require.main.filename);
 
 // router.use(function (req, resp, next) {
 //     next();
 // });
 var competition = require("../libs/data/competition.js");
+
 
 
 
@@ -119,20 +121,30 @@ router.post("/login", function (req, res) {
 });
 
 router.post("/user/avatar", async function (req, res) {
-    var fstream;
-    req.pipe(req.busboy);
-    req.busboy.on('file', function (fieldname, file, filename) {
-        console.log("Uploading: " + filename);
-        fstream = fs.createWriteStream(__dirname + '/../uploads/avatars/' + filename);
+    var avatar = req.files.avatar;
+    var d = new Date();
+    var n = d.getTime();
+    var mimetype = avatar.mimetype;
+    var arr = mimetype.split("/");
+    var ext = arr[1];
+    console.log(mimetype);
+    if (ext !== "jpeg" && ext !== "png") {
+        req.session.error = "upload a jpeg or png";
+        return res.redirect("/user/profile");
+    }
+    avatar.mv(__dirname + '/../uploads/avatars/' + n + '.' + ext, function (err) {
+        if (err) {
+            req.session.error = "error handling upload";
+            return res.redirect("/user/profile");
+        } else {
 
-        file.pipe(fstream);
-        fstream.on('close', function () {
-            var dir = '../uploads/avatars/' + filename;
-            user.id = req.session.user.id;
-            user.setAvatar(user.id, dir, function (result) {
-                res.redirect('back');
+            var userId = req.session.user.id;
+
+            user.setAvatar(userId, '/uploads/avatars/' + n + '.' + ext, function (result) {
+                req.session.user.avatar = '/uploads/avatars/' + n + '.' + ext;
+                return res.redirect("/user/profile");
             });
-        });
+        }
     });
 });
 

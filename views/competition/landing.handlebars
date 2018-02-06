@@ -5,7 +5,7 @@
         <div class="col-md-3">
             <div class="row">
                 <div class="col-md-12">
-                    <a href="/competition/create"><button type="button" class="btn btn-primary" style="width: 100%">Create New Competition</button></a>
+                    <a href="/competition/create"><button type="button" class="btn btn-primary" style="width: 100%">New Competition</button></a>
                 </div>
             </div>
 
@@ -48,6 +48,11 @@
 								    <p class="card-text">Start Date: {{competition.start}} <br> End Date: {{competition.end}}</p>
 								    <a href="/competition/view/{{competition.id}}" class="btn btn-primary">Go To Competition</a>
 								    <a href="/competition/leave/{{competition.id}}" class="btn btn-primary">Leave Competition</a>
+                                   {{#if isbet}}
+                                   {{else}}
+                                    <a href="/competition/bet/{{competition.id}}" class="btn btn-primary">Join Bet Pool</a>
+
+                                   {{/if}}
 						  		</div>
 						  	</div>
 						  </div>

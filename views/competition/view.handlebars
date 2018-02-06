@@ -1,91 +1,177 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+<div class="row">
+	<div class="col-md-12">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="card">
+					<h5 class="card-header">Competition Leaderboard</h5>
+					<div class="card-body">
 
- 
-	<div class="row">
-		<div class="col-md-12">
-			<div class="row">
-				<div class="col-md-8">
-					<div class="card">
-						<h5 class="card-header">Competition Leaderboard</h5>
-						<div class="card-body">
-
-							{{#each users}}
-							<div class="card w-100">
-								<div class="card-body">
-									<div class="row">
-										<div class="col-md-4">
-											<img src="https://d30y9cdsu7xlg0.cloudfront.net/png/21814-200.png" alt="">
-										</div>
-										<div class="col-md-8">
-											<p>Name: {{user.first_name}} {{user.last_name}}</p>
-											<p>Time: {{time}}</p>
-											<p>Age: {{user.age}}</p>
-										</div>
+						{{#each users}}
+						<div class="card w-100">
+							<div class="card-body">
+								<div class="row">
+									<div class="col-md-4">
+										{{#if user.avatar}}
+										<img class="tinyprofile" src="{{user.avatar}}" alt=""> {{else}}
+										<img src="https://d30y9cdsu7xlg0.cloudfront.net/png/21814-200.png" alt=""> {{/if}}
+									</div>
+									<div class="col-md-8">
+										<p>Name: {{user.first_name}} {{user.last_name}}</p>
+										<p>Time: {{time}}</p>
+										<p>Age: {{user.age}}</p>
 									</div>
 								</div>
 							</div>
-
-							<br> {{/each}}
-
-				
 						</div>
+
+						<br> {{/each}}
+
+
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-4">
+				<div class="card">
+					<h5 class="card-header">Chat Box</h5>
+					<div class="card-body">
+						<div id="chatbox" class="chatbox">
+							{{#each chat}}
+							<b>{{user.username}}</b> {{message}}
+							<br/> {{/each}}
+						</div>
+						<hr/>
+						<input id="chat_input" type="text">
+						<button id="chatsend">Send</button>
+						<script>
+
+
+							var socket = io.connect();
+
+							// on connection to server, ask for user's name with an anonymous callback
+							socket.on('connect', function () {
+								// call the server-side function 'adduser' and send one parameter (value of prompt)
+								socket.emit('adduser', '{{userdata.username}}');
+								switchRoom('room_{{competition}}');
+
+							});
+
+							// listener, whenever the server emits 'updatechat', this updates the chat body
+							socket.on('updatechat', function (username, data) {
+								$('#chatbox').append('<b>' + username + ':</b> ' + data + '<br>');
+								scrollBottom();
+							});
+
+							// listener, whenever the server emits 'updaterooms', this updates the room the client is in
+							socket.on('updaterooms', function (rooms, current_room) {
+								$('#rooms').empty();
+								$.each(rooms, function (key, value) {
+									if (value == current_room) {
+										$('#rooms').append('<div>' + value + '</div>');
+									}
+									else {
+										$('#rooms').append('<div><a href="#" onclick="switchRoom(\'' + value + '\')">' + value + '</a></div>');
+									}
+								});
+							});
+
+							function switchRoom(room) {
+								socket.emit('switchRoom', room);
+							}
+							function scrollBottom() {
+								var objDiv = document.getElementById("chatbox");
+								objDiv.scrollTop = objDiv.scrollHeight;
+							}
+							// on load of page
+							$(function () {
+								scrollBottom();
+								// when the client clicks SEND
+								$('#chatsend').click(function () {
+									var message = $('#chat_input').val();
+									$('#chat_input').val('');
+									// tell server to execute 'sendchat' and send along one parameter
+									socket.emit('sendchat', '{{competition}}', '{{user}}', message);
+								});
+
+								// when the client hits ENTER on their keyboard
+								$('#chat_input').keypress(function (e) {
+									if (e.which == 13) {
+										$(this).blur();
+										$('#chatsend').focus().click();
+									}
+								});
+							});
+
+
+						</script>
 					</div>
 				</div>
 
-				<div class="col-md-4">
-					<div class="card">
-						<h5 class="card-header">Chat Box</h5>
-						<div class="card-body">
-
-						</div>
-					</div>
-
-				</div>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<br>
+<br>
 
+<form action="/competition/time/{{competition}}" method="POST">
+	<label for="time">Enter Time</label>
+	<br/>
+	<input type="text" name="time" id="time" />
+	<input type="submit" value="Enter Time" />
+</form>
+<br/>
+<script>
+	$(function () {
+		$("#time").focusout(function () {
+			var val = $(this).val();
+			if (isNaN(val)) {
+				$(this).val("");
+				alert("Enter a Number!");
+			}
+		});
+	});
+</script>
 
-
-	<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-		<ol class="carousel-indicators">
-			<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-			<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-			<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-		</ol>
-		<div class="carousel-inner">
-			<div class="carousel-item active">
-				<div class="container sports-images">
-					<img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text=First slide" alt="First slide [800x400]"
-					 src="https://static.pexels.com/photos/258045/pexels-photo-258045.jpeg" data-holder-rendered="true">
-					<div class="centered">Cycling</div>
-				</div>
-			</div>
-			<div class="carousel-item">
-				<div class="container sports-images">
-					<img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=666&amp;fg=444&amp;text=Second slide" alt="Second slide [800x400]"
-					 src="https://static.pexels.com/photos/73760/swimming-swimmer-female-race-73760.jpeg" data-holder-rendered="true">
-					<div class="centered">Swimming</div>
-				</div>
-			</div>
-			<div class="carousel-item">
-				<div class="container sports-images">
-					<img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=555&amp;fg=333&amp;text=Third slide" alt="Third slide [800x400]"
-					 src="https://static.pexels.com/photos/235922/pexels-photo-235922.jpeg" data-holder-rendered="true">
-					<div class="centered">Running</div>
-				</div>
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+	<ol class="carousel-indicators">
+		<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+		<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+		<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+	</ol>
+	<div class="carousel-inner">
+		<div class="carousel-item active">
+			<div class="container sports-images">
+				<img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text=First slide" alt="First slide [800x400]"
+				 src="https://static.pexels.com/photos/258045/pexels-photo-258045.jpeg" data-holder-rendered="true">
+				<div class="centered">Cycling</div>
 			</div>
 		</div>
-		<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-			<span class="sr-only">Previous</span>
-		</a>
-		<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-			<span class="carousel-control-next-icon" aria-hidden="true"></span>
-			<span class="sr-only">Next</span>
-		</a>
+		<div class="carousel-item">
+			<div class="container sports-images">
+				<img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=666&amp;fg=444&amp;text=Second slide" alt="Second slide [800x400]"
+				 src="https://static.pexels.com/photos/73760/swimming-swimmer-female-race-73760.jpeg" data-holder-rendered="true">
+				<div class="centered">Swimming</div>
+			</div>
+		</div>
+		<div class="carousel-item">
+			<div class="container sports-images">
+				<img class="d-block w-100" data-src="holder.js/800x400?auto=yes&amp;bg=555&amp;fg=333&amp;text=Third slide" alt="Third slide [800x400]"
+				 src="https://static.pexels.com/photos/235922/pexels-photo-235922.jpeg" data-holder-rendered="true">
+				<div class="centered">Running</div>
+			</div>
+		</div>
 	</div>
+	<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		<span class="sr-only">Previous</span>
+	</a>
+	<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		<span class="sr-only">Next</span>
+	</a>
+</div>
 
 
 
